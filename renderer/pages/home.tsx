@@ -52,9 +52,10 @@ function Home() {
             </Select>
 
             <TextInput label="Host" />
-            <TextInput label="Port" />
+            <TextInput label="Port" type="number" />
+            <TextInput label="Database name" />
             <TextInput label="Username" />
-            <TextInput label="Password" />
+            <TextInput label="Password" type="password" />
 
             <button
               onClick={onClickWithIpcSync}

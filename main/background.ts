@@ -1,10 +1,11 @@
 import { app, ipcMain } from "electron";
 import serve from "electron-serve";
-import Knex from "knex";
 import schemaInspector from "knex-schema-inspector";
 
 import { createWindow } from "./helpers";
 import { Database } from "./config/database";
+import { postSendMessageToChatGPT } from "./service/chatgpt";
+import makeQuery from "./prompts/make-query";
 
 const isProd: boolean = process.env.NODE_ENV === "production";
 
@@ -57,8 +58,16 @@ ipcMain.on("connect-database-req", async (event, arg) => {
 
 ipcMain.on("make-raw-query-req", async (event, arg) => {
   const db = Database.getDatabase();
+  const inspector = schemaInspector(db);
+  const schema = await inspector.columnInfo();
 
-  const res = await db.raw(arg);
+  const { data } = await postSendMessageToChatGPT({
+    prompt: makeQuery(JSON.stringify(schema), arg),
+  });
+
+  console.log(data.choices[0].text);
+
+  const res = await db.raw(data.choices[0].text);
 
   event.sender.send(
     "make-raw-query-res",
