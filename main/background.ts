@@ -6,6 +6,7 @@ import { createWindow } from "./helpers";
 import { Database } from "./config/database";
 import { postSendMessageToChatGPT } from "./service/chatgpt";
 import makeQuery from "./prompts/make-query";
+import { Api } from "./config/api";
 
 const isProd: boolean = process.env.NODE_ENV === "production";
 
@@ -40,6 +41,7 @@ ipcMain.on("connect-database-req", async (event, arg) => {
   const data = JSON.parse(arg);
 
   const db = await Database.instance(data);
+  Api.instance(data.token);
 
   db.raw("SELECT 1")
     .then(() => {
@@ -65,8 +67,13 @@ ipcMain.on("make-raw-query-req", async (event, arg) => {
     prompt: makeQuery(JSON.stringify(schema), arg),
   });
 
-  console.log(data.choices[0].text);
-
+  event.sender.send(
+    "raw-query-res",
+    JSON.stringify({
+      raw: data.choices[0].text,
+      prompt: arg,
+    })
+  );
   const res = await db.raw(data.choices[0].text);
 
   event.sender.send(

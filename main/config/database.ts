@@ -7,6 +7,7 @@ type InstanceData = {
   password: string;
   database: string;
   port: number;
+  client: string;
 };
 
 export class Database {
@@ -16,7 +17,7 @@ export class Database {
     if (!this.database) {
       try {
         this.database = knex({
-          client: "pg",
+          client: data.client,
           connection: {
             host: data.host,
             user: data.user,

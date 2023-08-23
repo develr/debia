@@ -14,4 +14,8 @@ module.exports = {
       padding: "1rem",
     },
   },
+  daisyui: {
+    themes: ["dark"],
+  },
 };
+
