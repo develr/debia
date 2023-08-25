@@ -86,7 +86,8 @@ function QueryPage() {
             </div>
           )}
         </div>
-        <div className="left-panel bg-base-300 flex flex-col justify-between">
+
+        <div className="left-panel h-screen overflow-y-auto bg-base-300 flex flex-col justify-between">
           <div className="container py-8">
             <h1 className="text-xl mb-8">History</h1>
 
